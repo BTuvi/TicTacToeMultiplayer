@@ -3,7 +3,7 @@ import { useLocation } from 'react-router';
 import './game.css';
 
 import io from 'socket.io-client';
-const socket = io('http://localhost:5000');
+const socket = io('http://localhost:4000');
 
 function Game() {
   const [game, setGame] = useState(Array(9).fill(''));
@@ -19,6 +19,7 @@ function Game() {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const paramsRoom = params.get('room');
+  const name = params.get(name);
   const [room, setRoom] = useState(paramsRoom);
 
 
@@ -64,6 +65,14 @@ function Game() {
       setHasOpponent(true);
       setShare(false);
     });
+
+    socket.on("first player settings" ,() =>{
+      setMyTurn(true);
+    })
+    socket.on("second player settings",() =>{
+      setXO('O');
+      setMyTurn(false);
+    })
   }, []);
 
   useEffect(() => {
@@ -82,19 +91,12 @@ function Game() {
   }, [turnData, game, turnNumber, winner, myTurn]);
 
   useEffect(() => {
-    if (paramsRoom) {
-      // means you are player 2
-      setXO('O');
-      socket.emit('join', paramsRoom);
+    
+      
+      socket.emit('joinGame', paramsRoom , name);
       setRoom(paramsRoom);
-      setMyTurn(false);
-    } else {
-      // means you are player 1
-      const newRoomName = random();
-      socket.emit('create', newRoomName);
-      setRoom(newRoomName);
-      setMyTurn(true);
-    }
+      
+
   }, [paramsRoom]);
 
   return (
