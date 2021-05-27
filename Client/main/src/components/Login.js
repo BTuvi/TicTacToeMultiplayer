@@ -12,24 +12,6 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
-
-  // Join user to chat
-  function userJoin(id, username, email) {
-    axios
-      .post("http://localhost:4000/userJoin", {
-        name: username,
-        UserId: id,
-        emailName: email,
-      })
-      .then(
-        (response) => {
-          console.log(response);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-  }
     
   async function handleSubmit(e) {
     e.preventDefault();

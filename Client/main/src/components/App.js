@@ -8,8 +8,9 @@ import ForgetPassword from "./ForgetPassword";
 import UpdateProfile from "./UpdateProfile";
 
 import Join from "../components/Join/Join";
-import Chat from "../components/Chat/Chat";
-import GameRoom from "./Chat/GameRoom";
+import Chat from "../containers/MainRoom/Chat";
+import GameRoom from "../containers/PrivateRoom/GameRoom";
+
 
 function App() {
   return (
@@ -17,14 +18,12 @@ function App() {
       <Router>
         <AuthProvider>
           <Switch>
-            <Route exact path="/" component={Join} />
             <PrivateRoute path="/upadate-profile" component={UpdateProfile} />
+            <PrivateRoute path="/chat" component={Chat} />
             <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
-            <PrivateRoute path="/chat" component={Chat} />
+            <Route exact path="/" component={Join} />
             <Route path="/forget-password" component={ForgetPassword} />
-
-            {/* <Route path= "/game" component={Game}/> */}
             <Route path="/game" component={GameRoom} />
           </Switch>
         </AuthProvider>

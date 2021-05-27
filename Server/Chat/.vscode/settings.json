@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/f04b2f79-bd35-48ac-970f-773c61112b0e/resourceGroups/OnlineTicTacToe/providers/Microsoft.Web/sites/OnlineTicTacToe",
+    "appService.deploySubpath": "."
+}
