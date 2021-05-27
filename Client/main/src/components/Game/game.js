@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
+
 import './game.css';
 
 import io from 'socket.io-client';
-const socket = io('https://onlinetictactoe.azurewebsites.net/');
+
+const ENDPOINT = "https://onlinetictactoe.azurewebsites.net:4000/";
+const LOCAL_HOST = "http://localhost:4000/"
+
+const socket = io(LOCAL_HOST); //Change when is in Azure to ENDPOINT
 
 function Game() {
   const [game, setGame] = useState(Array(9).fill(''));

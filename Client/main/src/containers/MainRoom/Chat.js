@@ -3,18 +3,19 @@ import queryString from "query-string";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 
-import TextContainer from "../../TextContainer/TextContainer";
-import Messages from "../../Messages/Messages";
-import InfoBar from "../../InfoBar/InfoBar";
-import Input from "../../Input/Input";
-import Popup from "../../Popup";
-import Navbar from "../../Navbar";
+import TextContainer from "../../components/TextContainer/TextContainer";
+import MessagesContainer from "../../components/Messages/Messages";
+import InfoBar from "../../components/InfoBar/InfoBar";
+import Input from "../../components/Input/Input";
+import Popup from "../../components/Popup";
+import Navbar from "../../components/Navbar";
 
 import { v4 as uuidv4 } from "uuid";
 
 import "./Chat.css";
 
-const ENDPOINT = "https://onlinetictactoe.azurewebsites.net/";
+const ENDPOINT = "https://onlinetictactoe.azurewebsites.net:4000/";
+const LOCAL_HOST = "http://localhost:4000/"
 
 let socket;
 
@@ -34,7 +35,7 @@ const Chat = ({ location }) => {
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
 
-    socket = io(ENDPOINT);
+    socket = io(LOCAL_HOST ); //Change when is in Azure to ENDPOINT
 
     setName(name);
 
@@ -44,7 +45,7 @@ const Chat = ({ location }) => {
         history.push("/");
       }
     });
-  }, [ENDPOINT, location.search]);
+  }, [LOCAL_HOST, location.search]);
 
   useEffect(() => {
     socket.on("message", (message) => {
@@ -124,7 +125,7 @@ const Chat = ({ location }) => {
       <div className="container">
         <Navbar name={name} room={room}/>
         <InfoBar room={room} />
-        <Messages messages={messages} name={name} />
+        <MessagesContainer messages={messages} name={name} />
         <Input
           message={message}
           setMessage={setMessage}

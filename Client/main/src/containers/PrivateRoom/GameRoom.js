@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import queryString from "query-string";
 import io from "socket.io-client";
 import { useHistory } from "react-router-dom";
 
-import Messages from "../../Messages/Messages";
-import InfoBar from "../../InfoBar/InfoBar";
-import Input from "../../Input/Input";
-import Navbar from "../../Navbar";
+import MessagesContainer from "../../components/Messages/Messages";
+import InfoBar from "../../components/InfoBar/InfoBar";
+import Input from "../../components/Input/Input";
+import Navbar from "../../components/Navbar";
 
 import "../PrivateRoom/GameRoom.css";
-import Game from "../../Game/game";
+import Game from "../../components/Game/game";
 
-const ENDPOINT = "https://onlinetictactoe.azurewebsites.net/";
+const ENDPOINT = "https://onlinetictactoe.azurewebsites.net:4000/";
+const LOCAL_HOST = "http://localhost:4000/"
 
 let socket;
 
@@ -27,13 +28,13 @@ const GameRoom = ({ location }) => {
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
 
-    socket = io(ENDPOINT);
+    socket = io(LOCAL_HOST); //Change when is in Azure to ENDPOINT
 
     setName(name);
     setRoom(room);
 
     socket.emit("joinPrivateRoom", name);
-  }, [ENDPOINT, location.search]);
+  }, [LOCAL_HOST, location.search]);
 
   useEffect(() => {
     socket.on("messagePrivateRoom", (message) => {
@@ -61,7 +62,7 @@ const GameRoom = ({ location }) => {
       <div className="containerGameRoom">
         <Navbar />
         <InfoBar room={room} />
-        <Messages messages={messages} name={name} />
+        <MessagesContainer messages={messages} name={name} />
         <Input
           message={message}
           setMessage={setMessage}

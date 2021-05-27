@@ -12,20 +12,24 @@ const {
   changeRoom,
 } = require("./users");
 
+const  { add, removeAt, isKeyIn, findAt, AddToValue } =  require("./dictionary");
+
 const router = require("./router");
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
   cors: {
-    origin: "*",
-    credentials:true
+
+    //this for Azure.
+    // origin: "https://tictactoeclient.azurewebsites.net/",
+    // credentials: true,
+    origin:"*",
   },
 });
 
 app.use(cors());
 app.use(router);
-let dic = new Dictionary();
 let activaUser;
 
 io.on("connect", (socket) => {
@@ -125,6 +129,9 @@ io.on("connect", (socket) => {
     callback();
   });
 
+
+  //Game Methods
+
   socket.on("reqTurn", (data) => {
     const room = JSON.parse(data).room;
     io.in(room).emit("playerTurn", data);
@@ -133,14 +140,14 @@ io.on("connect", (socket) => {
   socket.on("joinGame", (name) => {
     activaUser = getUserByName(name);
 
-    if (!dic.isKeyIn(activaUser.room)) {
+    if (!isKeyIn(activaUser.room)) {
       socket.join(activaUser.room);
-      dic.add(activaUser.room, 1);
+      add(activaUser.room, 1);
       io.to(socket.id).emit("firstPlayerSettings", activaUser.room);
     } else {
       socket.join(activaUser.room);
-      if (dic.findAt(activaUser.room) === 1) {
-        dic.AddToValue(activaUser.room);
+      if (findAt(activaUser.room) === 1) {
+        AddToValue(activaUser.room);
         io.to(socket.id).emit("secondPlayerSettings", activaUser.room);
       }
       io.in(activaUser.room).emit("opponent_joined");
@@ -169,48 +176,9 @@ io.on("connect", (socket) => {
   });
 });
 
+
+//Port of server
 server.listen(process.env.PORT || 4000, () =>
   console.log(`Server has started.`)
 );
 
-function Dictionary() {
-  this.dataStore = [];
-
-  this.add = function (key, value) {
-    if (key && value) {
-      this.dataStore.push({
-        key: key,
-        value: value,
-      });
-      return this.dataStore;
-    }
-  };
-
-  this.removeAt = function (key) {
-    for (let i = 0; i < this.dataStore.length; i++) {
-      if (this.dataStore[i].key === key)
-        this.dataStore.splice(this.dataStore[i], 1);
-    }
-  };
-
-  this.isKeyIn = function (key) {
-    for (let i = 0; i < this.dataStore.length; i++) {
-      if (this.dataStore[i].key === key) return true;
-    }
-    return false;
-  };
-
-  this.findAt = function (key) {
-    for (let i = 0; i < this.dataStore.length; i++) {
-      if (this.dataStore[i].key === key) {
-        return this.dataStore[i].value;
-      }
-    }
-  };
-
-  this.AddToValue = function (key) {
-    this.dataStore.forEach((e) => {
-      if (e.key === key) e.value = 2;
-    });
-  };
-}
